@@ -1,0 +1,40 @@
+public class LaptopBookingHandler {
+
+    public static void sendEmailNotification(List<Laptop__c> lapList) {
+        // List to hold all email messages to be sent
+        List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
+
+        for (Laptop__c lap : lapList) {
+            // Check if email field is populated
+            if (lap.Email__c != null && lap.Email__c.contains('@')) { // Replace 'Email__c' with the actual email field
+                // Create a new email message
+                Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+                
+                // Set recipient's email address
+                email.setToAddresses(new List<String>{lap.Email__c});
+                
+                // Set the subject
+                email.setSubject('Welcome to our company');
+
+                // Construct the email body
+                String body = 'Dear ' + lap.Name + ', \n';
+                body += 'Welcome to Laptop Rentals! You have been seen as a valuable customer to us.\n';
+                body += 'Please continue your journey with us, while we try to provide you with good quality resources. \n';
+                body += 'Laptop Amount = ' + lap.Amount__c + ' \n';
+                body += 'Core Type = ' + lap.Core__c + ' \n';  // Assuming Core__c is the core type field
+                body += 'Laptop Type = ' + lap.Laptop_Type__c;
+
+                email.setPlainTextBody(body);
+
+                // Add email message to the list
+                emails.add(email);
+            }
+        }
+
+        // Send all emails at once
+        if (!emails.isEmpty()) {
+            Messaging.sendEmail(emails);
+        }
+    }
+
+}
